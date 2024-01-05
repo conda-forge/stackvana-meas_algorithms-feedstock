@@ -1,2 +1,6 @@
 conda_build:
   error_overlinking: false
+github:
+  branch_name: main
+  tooling_branch_name: main
+conda_forge_output_validation: true
