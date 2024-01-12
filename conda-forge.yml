@@ -1,5 +1,6 @@
 bot:
   automerge: true
+  check_solvable: true
 conda_build:
   error_overlinking: false
 github:
