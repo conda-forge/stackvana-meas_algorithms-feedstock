@@ -33,8 +33,8 @@ else
 fi
 
 function _report_errors {
-    cat ${CONDA_PREFIX}/bin/butler
-    cat ${PREFIX}/bin/butler
+    which butler
+    cat `which butler` || echo "no butler to cat!"
 
     for pth in "${EUPS_PATH}/EupsBuildDir/*/*/build.log" \
         "${EUPS_PATH}/EupsBuildDir/*/*/*/config.log" \
