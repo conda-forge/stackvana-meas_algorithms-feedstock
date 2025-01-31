@@ -33,9 +33,6 @@ else
 fi
 
 function _report_errors {
-    which butler
-    cat `which butler` || echo "no butler to cat!"
-
     for pth in "${EUPS_PATH}/EupsBuildDir/*/*/build.log" \
         "${EUPS_PATH}/EupsBuildDir/*/*/*/config.log" \
         "${EUPS_PATH}/EupsBuildDir/*/*/*/CMakeFiles/*.log" \
@@ -56,14 +53,18 @@ function _report_errors {
         done
     done
 
-    # undo the shim
-    if [[ `uname -s` == "Darwin" ]]; then
-        echo "Undoing the OSX python shim..."
-        mv ${CONDA_PREFIX}/bin/python${LSST_PYVER}.bak ${CONDA_PREFIX}/bin/python${LSST_PYVER}
-        # leave behind a symlink just in case this path propagates?
-        # ln -s ${CONDA_PREFIX}/bin/python${LSST_PYVER} ${CONDA_PREFIX}/bin/python${LSST_PYVER}.bak
+    for fname in $(find ${LSST_HOME} -type f -name "butler"); do
+        echo "butler: ${fname}"
+        cat ${fname}
         echo " "
-    fi
+    done
+
+    # undo the shim
+    echo "Undoing the python shim..."
+    mv ${CONDA_PREFIX}/bin/python${LSST_PYVER}.bak ${CONDA_PREFIX}/bin/python${LSST_PYVER}
+    # leave behind a symlink just in case this path propagates?
+    # ln -s ${CONDA_PREFIX}/bin/python${LSST_PYVER} ${CONDA_PREFIX}/bin/python${LSST_PYVER}.bak
+    echo " "
 
     exit 1
 }
@@ -73,10 +74,9 @@ function _report_errors {
 # command line tool gets /usr/bin/env put in for the prefix.
 # invoking env causes SIP to be invoked and all of the DYLD_LIBRARY_PATHs
 # get swallowed. Here we reinsert them right before the python executable.
-if [[ `uname -s` == "Darwin" ]]; then
-    echo "Making the python shim for OSX..."
-    mv ${CONDA_PREFIX}/bin/python${LSST_PYVER} ${CONDA_PREFIX}/bin/python${LSST_PYVER}.bak
-    echo "\
+echo "Making the python shim..."
+mv ${CONDA_PREFIX}/bin/python${LSST_PYVER} ${CONDA_PREFIX}/bin/python${LSST_PYVER}.bak
+echo "\
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -112,10 +112,9 @@ int main(int argc, char **argv) {
   execv(orig_py, argv);
 }
 " > main.c
-    ${CC} ${CFLAGS} ${LDFLAGS} main.c -o ${CONDA_PREFIX}/bin/python${LSST_PYVER}
-    chmod u+x ${CONDA_PREFIX}/bin/python${LSST_PYVER}
-    echo " "
-fi
+${CC} ${CFLAGS} ${LDFLAGS} main.c -o ${CONDA_PREFIX}/bin/python${LSST_PYVER}
+chmod u+x ${CONDA_PREFIX}/bin/python${LSST_PYVER}
+echo " "
 
 echo "Running eups install..."
 {
@@ -126,13 +125,11 @@ echo "Running eups install..."
 echo " "
 
 # undo the shim
-if [[ `uname -s` == "Darwin" ]]; then
-    echo "Undoing the OSX python shim..."
-    mv ${CONDA_PREFIX}/bin/python${LSST_PYVER}.bak ${CONDA_PREFIX}/bin/python${LSST_PYVER}
-    # leave behind a symlink just in case this path propagates?
-    # ln -s ${CONDA_PREFIX}/bin/python${LSST_PYVER} ${CONDA_PREFIX}/bin/python${LSST_PYVER}.bak
-    echo " "
-fi
+echo "Undoing the python shim..."
+mv ${CONDA_PREFIX}/bin/python${LSST_PYVER}.bak ${CONDA_PREFIX}/bin/python${LSST_PYVER}
+# leave behind a symlink just in case this path propagates?
+# ln -s ${CONDA_PREFIX}/bin/python${LSST_PYVER} ${CONDA_PREFIX}/bin/python${LSST_PYVER}.bak
+echo " "
 
 # fix up the python paths
 # we set the python #! line by hand so that we get the right thing coming out
