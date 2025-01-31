@@ -26,7 +26,7 @@ build:
   number: 0
   merge_build_host: true
   script:
-    - stackvana-build meas_algorithms
+    - . {{ RECIPE_DIR }}/stackvana-build-local.sh meas_algorithms
 
 requirements:
   host:
