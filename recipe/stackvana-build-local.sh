@@ -60,7 +60,7 @@ function _report_errors {
     echo "files named 'butler':"
     find ${CONDA_PREFIX} -type f -name "butler"
     echo " "
-    for fname in $(find ${LSST_HOME} -type f -name "butler"); do
+    for fname in $(find ${CONDA_PREFIX} -type f -name "butler"); do
         echo "butler: ${fname}"
         cat ${fname}
         echo " "
