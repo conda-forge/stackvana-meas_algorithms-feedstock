@@ -53,11 +53,22 @@ function _report_errors {
         done
     done
 
+    echo "================================================================="
+    echo "================================================================="
+    echo "================================================================="
+    echo "================================================================="
+    echo "files named 'butler':"
+    find ${CONDA_PREFIX} -type f -name "butler"
+    echo " "
     for fname in $(find ${LSST_HOME} -type f -name "butler"); do
         echo "butler: ${fname}"
         cat ${fname}
         echo " "
     done
+    echo "================================================================="
+    echo "================================================================="
+    echo " "
+    echo " "
 
     # undo the shim
     echo "Undoing the python shim..."
