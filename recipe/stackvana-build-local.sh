@@ -129,7 +129,7 @@ echo " "
 
 echo "Running eups install..."
 {
-    export SCONSFLAGS=${SCONSFLAGS}" --no-test"
+    export SCONSFLAGS=${SCONSFLAGS}" --no-tests"
     eups distrib install -v -t ${LSST_DM_TAG} $@
 } || {
     _report_errors
