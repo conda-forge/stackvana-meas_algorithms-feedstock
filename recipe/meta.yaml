@@ -43,7 +43,7 @@ test:
     - setup meas_algorithms
     - python -c "import lsst.afw"
     - setup daf_butler
-    - butler --help
+    - butler --help 
 
 about:
   home: https://github.com/beckermr/stackvana-core
